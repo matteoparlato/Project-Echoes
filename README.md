@@ -1,2 +1,2 @@
-# Project-Echoes
+# Project Echoes
 Repository of Project Echoes
