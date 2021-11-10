@@ -2,6 +2,7 @@ page 50100 "AMW IoT Hub Setup"
 {
     ApplicationArea = All;
     Caption = 'AMW IoT Hub Setup';
+    DelayedInsert = true;
     PageType = Worksheet;
     SourceTable = "AMW IoT Hub Setup";
     UsageCategory = Administration;

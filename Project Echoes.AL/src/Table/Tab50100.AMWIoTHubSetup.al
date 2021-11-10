@@ -9,13 +9,11 @@ table 50100 "AMW IoT Hub Setup"
         {
             Caption = 'Hub Name';
             DataClassification = ToBeClassified;
-            NotBlank = true;
         }
         field(2; "SAS Token"; Text[1000])
         {
             Caption = 'SAS Token';
             DataClassification = ToBeClassified;
-            NotBlank = true;
         }
     }
     keys
@@ -30,6 +28,8 @@ table 50100 "AMW IoT Hub Setup"
     var
         Helper: Codeunit "AMW IoT Hub Helper";
     begin
+        Rec.TestField("Hub Name");
+        Rec.TestField("SAS Token");
         Helper.SetDefaultEndpoints("Hub Name");
     end;
 
