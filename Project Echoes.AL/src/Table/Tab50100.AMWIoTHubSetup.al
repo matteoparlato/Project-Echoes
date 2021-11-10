@@ -1,0 +1,49 @@
+table 50100 "AMW IoT Hub Setup"
+{
+    Caption = 'AMW IoT Hub Setup';
+    DataClassification = ToBeClassified;
+
+    fields
+    {
+        field(1; "Hub Name"; Text[250])
+        {
+            Caption = 'Hub Name';
+            DataClassification = ToBeClassified;
+            NotBlank = true;
+        }
+        field(2; "SAS Token"; Text[1000])
+        {
+            Caption = 'SAS Token';
+            DataClassification = ToBeClassified;
+            NotBlank = true;
+        }
+    }
+    keys
+    {
+        key(PK; "Hub Name")
+        {
+            Clustered = true;
+        }
+    }
+
+    trigger OnInsert()
+    var
+        Helper: Codeunit "AMW IoT Hub Helper";
+    begin
+        Helper.SetDefaultEndpoints("Hub Name");
+    end;
+
+    trigger OnDelete()
+    var
+        Endpoint: Record "AMW IoT Hub Endpoint";
+        Device: Record "AMW IoT Device";
+    begin
+        Endpoint.Reset();
+        Endpoint.SetRange("Hub Name", "Hub Name");
+        Endpoint.DeleteAll();
+
+        Device.Reset();
+        Device.SetRange("Hub Name", "Hub Name");
+        Device.DeleteAll();
+    end;
+}
