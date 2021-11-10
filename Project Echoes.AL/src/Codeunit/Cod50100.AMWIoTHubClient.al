@@ -83,56 +83,6 @@ codeunit 50100 "AMW IoT Hub Client"
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="HubName"></param>
-    /// <returns></returns>
-    procedure GetDevicesStatus(HubName: Text): Boolean
-    var
-        Endpoint: Record "AMW IoT Hub Endpoint";
-        Device: Record "AMW IoT Device";
-        DeviceID: Text;
-        ResponseMessage: HttpResponseMessage;
-        ReponseContent: Text;
-        JArray: JsonArray;
-        JObject: JsonObject;
-        JToken: JsonToken;
-        JProperty: JsonToken;
-    begin
-        Endpoint.Get(HubName, Endpoint.Code::DEVICES);
-
-        Client.Get(Endpoint.Uri, ResponseMessage);
-        if ResponseMessage.IsSuccessStatusCode() then begin
-            Device.Reset();
-            Device.SetRange("Hub Name", HubName);
-            Device.DeleteAll();
-
-            ResponseMessage.Content().ReadAs(ReponseContent);
-
-            JArray.ReadFrom(ReponseContent);
-            foreach JToken in JArray do begin
-                Device.init;
-                Device."Hub Name" := HubName;
-
-                JObject := JToken.AsObject();
-                if JObject.Get('deviceId', JProperty) then
-                    if Device.Get(JProperty.AsValue().AsText()) then begin
-                        if JObject.Get('connectionState', JProperty) then
-                            Device."Connection Status" := JProperty.AsValue().AsText();
-                        if JObject.Get('status', JProperty) then
-                            Device.Status := JProperty.AsValue().AsText();
-                        if JObject.Get('statusUpdatedTime', JProperty) then
-                            Device."Last Status Update Time" := JProperty.AsValue().AsDateTime();
-
-                        Device.Modify();
-                    end;
-            end;
-        end;
-
-        exit(ResponseMessage.IsSuccessStatusCode());
-    end;
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="Device"></param>
     /// <param name="Method"></param>
     /// <param name="Payload"></param>

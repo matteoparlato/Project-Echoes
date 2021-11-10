@@ -46,8 +46,8 @@ codeunit 50101 "AMW IoT Hub Helper"
     /// 
     /// </summary>
     /// <param name="NotificationContext"></param>
-    procedure OpenHubExplorer(NotificationContext: Notification)
+    procedure OpenHubSetup(NotificationContext: Notification)
     begin
-        Page.Run(Page::"AMW IoT Hub Explorer");
+        Page.Run(Page::"AMW IoT Hub Setup");
     end;
 }

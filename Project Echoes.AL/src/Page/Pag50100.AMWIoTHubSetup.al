@@ -43,32 +43,6 @@ page 50100 "AMW IoT Hub Setup"
     {
         area(Processing)
         {
-            action("Get Hub Devices")
-            {
-                ApplicationArea = All;
-                Image = BOM;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
-
-                trigger OnAction()
-                var
-                    Service: Codeunit "AMW IoT Hub Client";
-                begin
-                    Clear(GlobalNotification);
-
-                    Rec.TestField("SAS Token");
-
-                    Service.InitializeClient(Rec."SAS Token");
-                    if Service.GetDevices(Rec."Hub Name") then begin
-                        GlobalNotification.Message(StrSubstNo(GetHubDevicesSuccessMsg, Rec."Hub Name"));
-                        GlobalNotification.AddAction(OpenHubExplorerActionTxt, Codeunit::"AMW IoT Hub Helper", 'OpenHubExplorer');
-                    end else
-                        GlobalNotification.Message(StrSubstNo(GetHubDevicesErrorMsg, Rec."Hub Name"));
-                    GlobalNotification.Send();
-                end;
-            }
-
             action("Endpoints")
             {
                 ApplicationArea = All;
@@ -88,10 +62,4 @@ page 50100 "AMW IoT Hub Setup"
             }
         }
     }
-
-    var
-        GlobalNotification: Notification;
-        GetHubDevicesSuccessMsg: Label 'Successfully retrieved devices information from %1!';
-        OpenHubExplorerActionTxt: Label 'Open Hub Explorer';
-        GetHubDevicesErrorMsg: Label 'An error occured while contacting %1. Please check if the provided SAS token is still valid.';
 }

@@ -1,6 +1,6 @@
-page 50103 "AMW Invoke Direct Method Card"
+page 50103 "AMW Direct Method"
 {
-    Caption = 'Invoke Direct Method';
+    Caption = 'Direct Method';
     DeleteAllowed = false;
     InsertAllowed = false;
     LinksAllowed = false;

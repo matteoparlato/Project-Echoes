@@ -18,7 +18,7 @@ page 50102 "AMW IoT Hub Explorer"
             group(General)
             {
                 ShowCaption = false;
-                field(HubName; HubName)
+                field(HubNamee; GlobalHubName)
                 {
                     ApplicationArea = All;
                     Caption = 'Hub Name';
@@ -26,8 +26,12 @@ page 50102 "AMW IoT Hub Explorer"
                     TableRelation = "AMW IoT Hub Setup";
 
                     trigger OnAfterLookup(Selected: RecordRef)
+                    var
+                        Hub: Record "AMW IoT Hub Setup";
                     begin
+                        Selected.SetTable(Hub);
 
+                        SetPageFilter(Hub."Hub Name");
                     end;
                 }
             }
@@ -62,7 +66,33 @@ page 50102 "AMW IoT Hub Explorer"
     {
         area(Processing)
         {
-            action("Invoke Direct Method")
+            action("Get Devices")
+            {
+                ApplicationArea = All;
+                Image = BOM;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+
+                trigger OnAction()
+                var
+                    Hub: Record "AMW IoT Hub Setup";
+                    Service: Codeunit "AMW IoT Hub Client";
+                begin
+                    Clear(GlobalNotification);
+
+                    Hub.Get(GlobalHubName);
+                    Hub.TestField("SAS Token");
+
+                    Service.InitializeClient(Hub."SAS Token");
+                    if Service.GetDevices(Rec."Hub Name") then begin
+                        GlobalNotification.Message(StrSubstNo(GetHubDevicesSuccessMsg, Rec."Hub Name"));
+                    end else
+                        GlobalNotification.Message(StrSubstNo(ServiceErrorMsg, Rec."Hub Name"));
+                    GlobalNotification.Send();
+                end;
+            }
+            action("Direct Method")
             {
                 ApplicationArea = All;
                 Image = Action;
@@ -72,7 +102,7 @@ page 50102 "AMW IoT Hub Explorer"
 
                 trigger OnAction()
                 var
-                    InvokeDirectMethod: Page "AMW Invoke Direct Method Card";
+                    InvokeDirectMethod: Page "AMW Direct Method";
                 begin
                     InvokeDirectMethod.SetDevice(Rec);
                     InvokeDirectMethod.Run();
@@ -82,8 +112,29 @@ page 50102 "AMW IoT Hub Explorer"
     }
 
     var
-        HubName: Text;
+        GlobalHubName: Text;
+        GlobalNotification: Notification;
         StyleExpression: Text;
+        MissingSetupMsg: Label 'No Azure IoT Hub has been configured yet.';
+        MissingSetupActionMsg: Label 'Configure Hub';
+        GetHubDevicesSuccessMsg: Label 'Successfully retrieved devices information from %1!';
+        ServiceErrorMsg: Label 'An error occured while contacting %1. Please check if the provided SAS token is still valid.';
+
+
+    trigger OnOpenPage()
+    var
+        Hub: Record "AMW IoT Hub Setup";
+    begin
+        Clear(GlobalNotification);
+
+        if Hub.FindFirst() then
+            SetPageFilter(Hub."Hub Name")
+        else begin
+            GlobalNotification.Message(MissingSetupMsg);
+            GlobalNotification.AddAction(MissingSetupActionMsg, Codeunit::"AMW IoT Hub Helper", 'OpenHubSetup');
+            GlobalNotification.Send();
+        end;
+    end;
 
     trigger OnAfterGetRecord()
     begin
@@ -91,5 +142,16 @@ page 50102 "AMW IoT Hub Explorer"
             StyleExpression := 'Favorable'
         else
             StyleExpression := 'Unfavorable';
+    end;
+
+    local procedure SetPageFilter(HubName: Text)
+    begin
+        GlobalHubName := HubName;
+
+        Rec.FilterGroup(2);
+        Rec.SetRange("Hub Name", HubName);
+        Rec.FilterGroup(0);
+
+        CurrPage.Update();
     end;
 }
