@@ -92,6 +92,25 @@ page 50102 "AMW IoT Hub Explorer"
                     GlobalNotification.Send();
                 end;
             }
+            action("Telemetry")
+            {
+                ApplicationArea = All;
+                Image = BOMRegisters;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+
+                trigger OnAction()
+                var
+                    DeviceTelemetry: Record "AMW IoT Device Telemetry";
+                    DeviceTelemetries: Page "AMW IoT Device Telemetries";
+                begin
+                    DeviceTelemetry.SetRange("Hub Name", Rec."Hub Name");
+                    DeviceTelemetry.SetRange("Device ID", Rec."Device ID");
+                    DeviceTelemetries.SetTableView(DeviceTelemetry);
+                    DeviceTelemetries.Run();
+                end;
+            }
             action("Direct Method")
             {
                 ApplicationArea = All;
@@ -102,7 +121,7 @@ page 50102 "AMW IoT Hub Explorer"
 
                 trigger OnAction()
                 var
-                    InvokeDirectMethod: Page "AMW Direct Method";
+                    InvokeDirectMethod: Page "AMW IoT Direct Method";
                 begin
                     InvokeDirectMethod.SetDevice(Rec);
                     InvokeDirectMethod.Run();

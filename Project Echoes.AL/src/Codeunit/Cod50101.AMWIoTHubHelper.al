@@ -1,5 +1,10 @@
 codeunit 50101 "AMW IoT Hub Helper"
 {
+    var
+        ConfirmDeletingEntriesQst: Label 'Are you sure that you want to delete log entries?';
+        DeletingMsg: Label 'Deleting Entries...';
+        DeletedMsg: Label 'The entries were deleted from the log.';
+
     /// <summary>
     /// 
     /// </summary>
@@ -40,6 +45,34 @@ codeunit 50101 "AMW IoT Hub Helper"
         Endpoint.Code := Code;
         Endpoint.Uri := Uri.Replace('fully-qualified-iothubname', HubName);
         Endpoint.Insert();
+    end;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="DaysOld"></param>
+    procedure DeleteTelemetryEntries(DaysOld: Integer)
+    var
+        Window: Dialog;
+        DeviceTelemetry: Record "AMW IoT Device Telemetry";
+    begin
+        if GuiAllowed then begin
+            if not Confirm(ConfirmDeletingEntriesQst) then
+                exit;
+
+            Window.Open(DeletingMsg);
+        end;
+
+        if DaysOld > 0 then
+            DeviceTelemetry.SetFilter("Import DateTime", '<=%1', CreateDateTime(Today - DaysOld, Time));
+
+        DeviceTelemetry.DeleteAll();
+
+        if GuiAllowed then begin
+            Window.Close;
+
+            Message(DeletedMsg);
+        end;
     end;
 
     /// <summary>

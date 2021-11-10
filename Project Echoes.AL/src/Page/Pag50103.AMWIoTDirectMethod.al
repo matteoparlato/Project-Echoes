@@ -1,4 +1,4 @@
-page 50103 "AMW Direct Method"
+page 50103 "AMW IoT Direct Method"
 {
     Caption = 'Direct Method';
     DeleteAllowed = false;
