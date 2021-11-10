@@ -39,6 +39,7 @@ codeunit 50100 "AMW IoT Hub Client"
     /// <returns></returns>
     procedure GetDevices(HubName: Text): Boolean
     var
+        Hub: Record "AMW IoT Hub Setup";
         Endpoint: Record "AMW IoT Hub Endpoint";
         Device: Record "AMW IoT Device";
         ResponseMessage: HttpResponseMessage;
@@ -48,9 +49,17 @@ codeunit 50100 "AMW IoT Hub Client"
         JToken: JsonToken;
         JProperty: JsonToken;
     begin
+        Hub.Get(HubName);
         Endpoint.Get(HubName, Endpoint.Code::DEVICES);
 
+        if Hub."Enable Log" then
+            LogServiceEvent(Endpoint, '');
+
         Client.Get(Endpoint.Uri, ResponseMessage);
+
+        if Hub."Enable Log" then
+            LogServiceEvent(Endpoint, ResponseMessage);
+
         if ResponseMessage.IsSuccessStatusCode() then begin
             Device.Reset();
             Device.SetRange("Hub Name", HubName);
@@ -89,13 +98,15 @@ codeunit 50100 "AMW IoT Hub Client"
     /// <returns></returns>
     procedure InvokeMethod(Device: Record "AMW IoT Device"; Method: Text; Payload: Text): Boolean
     var
+        Hub: Record "AMW IoT Hub Setup";
         Endpoint: Record "AMW IoT Hub Endpoint";
-        RemoteUri: Text;
+        Uri: Text;
         Content: HttpContent;
         ContentText: Text;
         JObject: JsonObject;
         ResponseMessage: HttpResponseMessage;
     begin
+        Hub.Get(Device."Hub Name");
         Endpoint.Get(Device."Hub Name", Endpoint.Code::TWINS_METHODS_INVOKE);
 
         JObject.Add('connectTimeoutInSeconds', 60);
@@ -106,10 +117,57 @@ codeunit 50100 "AMW IoT Hub Client"
         JObject.WriteTo(ContentText);
         Content.WriteFrom(ContentText);
 
-        RemoteUri := Endpoint.Uri.Replace('{deviceId}', Device."Device ID");
+        Uri := Endpoint.Uri.Replace('{deviceId}', Device."Device ID");
 
-        Client.Post(RemoteUri, Content, ResponseMessage);
+        if Hub."Enable Log" then
+            LogServiceEvent(Endpoint, ContentText);
+
+        Client.Post(Uri, Content, ResponseMessage);
+
+        if Hub."Enable Log" then
+            LogServiceEvent(Endpoint, ResponseMessage);
 
         exit(ResponseMessage.IsSuccessStatusCode());
+    end;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Endpoint"></param>
+    /// <param name="Uri"></param>
+    /// <param name="Content"></param>
+    local procedure LogServiceEvent(Endpoint: Record "AMW IoT Hub Endpoint"; Content: Text)
+    var
+        ActivityLog: Record "Activity Log";
+    begin
+        ActivityLog.LogActivity(Endpoint, ActivityLog.Status::Success, 'AMW_AZ_IOT_HUB_REQUEST', Endpoint.Uri, Content);
+    end;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Endpoint"></param>
+    /// <param name="RequestMessage"></param>
+    local procedure LogServiceEvent(Endpoint: Record "AMW IoT Hub Endpoint"; RequestMessage: HttpRequestMessage)
+    var
+        ActivityLog: Record "Activity Log";
+        ContentText: Text;
+    begin
+        RequestMessage.Content.ReadAs(ContentText);
+        ActivityLog.LogActivity(Endpoint, ActivityLog.Status::Success, 'AMW_AZ_IOT_HUB_REQUEST', RequestMessage.GetRequestUri(), ContentText);
+    end;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Endpoint"></param>
+    /// <param name="ResponseMessage"></param>
+    local procedure LogServiceEvent(Endpoint: Record "AMW IoT Hub Endpoint"; ResponseMessage: HttpResponseMessage)
+    var
+        ActivityLog: Record "Activity Log";
+        ContentText: Text;
+    begin
+        ResponseMessage.Content.ReadAs(ContentText);
+        ActivityLog.LogActivity(Endpoint, ActivityLog.Status::Success, 'AMW_AZ_IOT_HUB_RESPONSE', Format(ResponseMessage.HttpStatusCode), ContentText);
     end;
 }

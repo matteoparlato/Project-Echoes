@@ -24,6 +24,10 @@ page 50100 "AMW IoT Hub Setup"
                     ExtendedDatatype = Masked;
                     ShowMandatory = true;
                 }
+                field("Enable Log"; Rec."Enable Log")
+                {
+                    ApplicationArea = All;
+                }
             }
         }
         area(factboxes)

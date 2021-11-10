@@ -10,9 +10,14 @@ table 50100 "AMW IoT Hub Setup"
             Caption = 'Hub Name';
             DataClassification = ToBeClassified;
         }
-        field(2; "SAS Token"; Text[1000])
+        field(2; "SAS Token"; Text[250])
         {
             Caption = 'SAS Token';
+            DataClassification = ToBeClassified;
+        }
+        field(3; "Enable Log"; Boolean)
+        {
+            Caption = 'Enable Log';
             DataClassification = ToBeClassified;
         }
     }

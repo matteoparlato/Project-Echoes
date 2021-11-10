@@ -38,6 +38,7 @@ page 50101 "AMW IoT Hub Endpoints"
             action("Set Defaults")
             {
                 ApplicationArea = All;
+                Image = Restore;
                 Promoted = true;
                 PromotedCategory = Process;
 
@@ -46,6 +47,23 @@ page 50101 "AMW IoT Hub Endpoints"
                     Helper: Codeunit "AMW IoT Hub Helper";
                 begin
                     Helper.SetDefaultEndpoints(GlobalHubName);
+                end;
+            }
+        }
+        area(Navigation)
+        {
+            action("Logs")
+            {
+                ApplicationArea = All;
+                Image = Log;
+                Promoted = true;
+                PromotedCategory = Process;
+
+                trigger OnAction()
+                var
+                    ActivityLog: Record "Activity Log";
+                begin
+                    ActivityLog.ShowEntries(Rec);
                 end;
             }
         }
