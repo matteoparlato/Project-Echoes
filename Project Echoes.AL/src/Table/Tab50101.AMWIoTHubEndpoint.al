@@ -11,10 +11,9 @@ table 50101 "AMW IoT Hub Endpoint"
             TableRelation = "AMW IoT Device"."Hub Name";
             DataClassification = ToBeClassified;
         }
-        field(2; "Code"; Option)
+        field(2; "Code"; Enum "AMW IoT Hub Endpoints")
         {
             Caption = 'Code';
-            OptionMembers = DEVICES,TWINS_METHODS_INVOKE;
             DataClassification = ToBeClassified;
         }
         field(3; Uri; Text[250])

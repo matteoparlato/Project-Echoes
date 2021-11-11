@@ -26,8 +26,8 @@ codeunit 50101 "AMW IoT Hub Helper"
         Endpoint.SetRange("Hub Name", HubName);
         Endpoint.DeleteAll();
 
-        AddEndpoint(HubName, Endpoint.Code::DEVICES, 'https://fully-qualified-iothubname.azure-devices.net/devices?api-version=2020-05-31-preview');
-        AddEndpoint(HubName, Endpoint.Code::TWINS_METHODS_INVOKE, 'https://fully-qualified-iothubname.azure-devices.net/twins/{deviceId}/methods?api-version=2020-05-31-preview');
+        AddEndpoint(HubName, Endpoint.Code::DEVICES.AsInteger(), 'https://fully-qualified-iothubname.azure-devices.net/devices?api-version=2020-05-31-preview');
+        AddEndpoint(HubName, Endpoint.Code::TWINS_METHODS_INVOKE.AsInteger(), 'https://fully-qualified-iothubname.azure-devices.net/twins/{deviceId}/methods?api-version=2020-05-31-preview');
     end;
 
     /// <summary>
@@ -36,7 +36,7 @@ codeunit 50101 "AMW IoT Hub Helper"
     /// <param name="HubName"></param>
     /// <param name="Code"></param>
     /// <param name="Uri"></param>
-    procedure AddEndpoint(HubName: Text; Code: Option; Uri: Text)
+    procedure AddEndpoint(HubName: Text; Code: Integer; Uri: Text)
     var
         Endpoint: Record "AMW IoT Hub Endpoint";
     begin
