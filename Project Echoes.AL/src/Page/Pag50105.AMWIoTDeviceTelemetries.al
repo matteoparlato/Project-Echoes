@@ -14,10 +14,6 @@ page 50105 "AMW IoT Device Telemetries"
         {
             repeater(General)
             {
-                field(ID; Rec.ID)
-                {
-                    ApplicationArea = All;
-                }
                 field("Hub Name"; Rec."Hub Name")
                 {
                     ApplicationArea = All;
@@ -34,11 +30,7 @@ page 50105 "AMW IoT Device Telemetries"
                 {
                     ApplicationArea = All;
                 }
-                field("Key"; Rec."Key")
-                {
-                    ApplicationArea = All;
-                }
-                field("Value"; Rec."Value")
+                field(Payload; Rec.Payload)
                 {
                     ApplicationArea = All;
                 }
@@ -53,7 +45,7 @@ page 50105 "AMW IoT Device Telemetries"
             action(Delete7days)
             {
                 ApplicationArea = All;
-                Caption = 'Delete Entries Older than 7 Days';
+                Caption = 'Delete Entries Older Than 7 Days';
                 Image = ClearLog;
                 Promoted = true;
                 PromotedCategory = Process;

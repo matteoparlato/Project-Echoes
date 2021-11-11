@@ -22,22 +22,17 @@ table 50103 "AMW IoT Device Telemetry"
         }
         field(4; "Enqueued DateTime"; DateTime)
         {
-            Caption = 'Enqueued Time';
+            Caption = 'Enqueued DateTime';
             DataClassification = ToBeClassified;
         }
         field(5; "Import DateTime"; DateTime)
         {
-            Caption = 'Processed Time';
+            Caption = 'Import DateTime';
             DataClassification = ToBeClassified;
         }
-        field(6; "Key"; Text[250])
+        field(6; "Payload"; Text[2048])
         {
-            Caption = 'Key';
-            DataClassification = ToBeClassified;
-        }
-        field(7; "Value"; Text[250])
-        {
-            Caption = 'Value';
+            Caption = 'Payload';
             DataClassification = ToBeClassified;
         }
     }

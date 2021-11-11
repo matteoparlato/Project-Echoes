@@ -26,7 +26,7 @@ page 50104 "AMW IoT Device Telemetry API"
                 {
                     Caption = 'Hub Name';
                 }
-                field(deviceID; Rec."Device ID")
+                field(deviceId; Rec."Device ID")
                 {
                     Caption = 'Device ID';
                 }
@@ -38,13 +38,9 @@ page 50104 "AMW IoT Device Telemetry API"
                 {
                     Caption = 'Processed Time';
                 }
-                field("key"; Rec."Key")
+                field(payload; Rec.Payload)
                 {
-                    Caption = 'Key';
-                }
-                field("value"; Rec."Value")
-                {
-                    Caption = 'Value';
+                    Caption = 'Payload';
                 }
             }
         }
