@@ -54,7 +54,11 @@ page 50102 "AMW IoT Hub Explorer"
                     ApplicationArea = All;
                     StyleExpr = StyleExpression;
                 }
-                field("Last Status Update Time"; Rec."Last Status Update Time")
+                field("Last Status Update DateTime"; Rec."Last Status Update DateTime")
+                {
+                    ApplicationArea = All;
+                }
+                field("Last Activity DateTime"; Rec."Last Activity DateTime")
                 {
                     ApplicationArea = All;
                 }

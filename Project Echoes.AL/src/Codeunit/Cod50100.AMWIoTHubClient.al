@@ -75,12 +75,16 @@ codeunit 50100 "AMW IoT Hub Client"
                 JObject := JToken.AsObject();
                 if JObject.Get('deviceId', JProperty) then
                     Device."Device ID" := JProperty.AsValue().AsText();
+                if JObject.Get('generationId', JProperty) then
+                    Device."Generation ID" := JProperty.AsValue().AsText();
                 if JObject.Get('connectionState', JProperty) then
                     Device."Connection Status" := JProperty.AsValue().AsText();
                 if JObject.Get('status', JProperty) then
                     Device.Status := JProperty.AsValue().AsText();
-                if JObject.Get('statusUpdatedTime', JProperty) then
-                    Device."Last Status Update Time" := JProperty.AsValue().AsDateTime();
+                if JObject.Get('connectionStateUpdatedTime', JProperty) then
+                    Device."Last Status Update DateTime" := JProperty.AsValue().AsDateTime();
+                if JObject.Get('lastActivityTime', JProperty) then
+                    Device."Last Activity DateTime" := JProperty.AsValue().AsDateTime();
 
                 Device.Insert();
             end;

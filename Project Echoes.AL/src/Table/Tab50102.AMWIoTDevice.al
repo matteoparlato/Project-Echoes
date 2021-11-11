@@ -16,19 +16,29 @@ table 50102 "AMW IoT Device"
             Caption = 'Device ID';
             DataClassification = ToBeClassified;
         }
-        field(3; Status; Text[30])
+        field(3; "Generation ID"; Text[50])
+        {
+            Caption = 'Device ID';
+            DataClassification = ToBeClassified;
+        }
+        field(4; Status; Text[30])
         {
             Caption = 'Status';
             DataClassification = ToBeClassified;
         }
-        field(4; "Connection Status"; Text[30])
+        field(5; "Connection Status"; Text[30])
         {
             Caption = 'Connection Status';
             DataClassification = ToBeClassified;
         }
-        field(5; "Last Status Update Time"; DateTime)
+        field(6; "Last Status Update DateTime"; DateTime)
         {
-            Caption = 'Last Status Update Time';
+            Caption = 'Last Status Update DateTime';
+            DataClassification = ToBeClassified;
+        }
+        field(7; "Last Activity DateTime"; DateTime)
+        {
+            Caption = 'Last Activity DateTime';
             DataClassification = ToBeClassified;
         }
     }
