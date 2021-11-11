@@ -42,6 +42,7 @@ table 50100 "AMW IoT Hub Setup"
     var
         Endpoint: Record "AMW IoT Hub Endpoint";
         Device: Record "AMW IoT Device";
+        Telemetry: Record "AMW IoT Device Telemetry";
     begin
         Endpoint.Reset();
         Endpoint.SetRange("Hub Name", "Hub Name");
@@ -50,5 +51,9 @@ table 50100 "AMW IoT Hub Setup"
         Device.Reset();
         Device.SetRange("Hub Name", "Hub Name");
         Device.DeleteAll();
+
+        Telemetry.Reset();
+        Telemetry.SetRange("Hub Name", "Hub Name");
+        Telemetry.DeleteAll();
     end;
 }
