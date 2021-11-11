@@ -35,7 +35,7 @@ page 50101 "AMW IoT Hub Endpoints"
     {
         area(Processing)
         {
-            action("Set Defaults")
+            action("Restore Defaults")
             {
                 ApplicationArea = All;
                 Image = Restore;
