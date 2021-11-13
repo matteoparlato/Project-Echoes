@@ -1,0 +1,253 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each_blob_in_storage_account": {
+                "actions": {
+                    "Compose": {
+                        "inputs": "@variables('FileBlob')",
+                        "runAfter": {
+                            "Set_FileBlob": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Compose"
+                    },
+                    "Delete_blob": {
+                        "inputs": {
+                            "headers": {
+                                "SkipDeleteIfFileNotFoundOnServer": false
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                }
+                            },
+                            "method": "delete",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent(items('For_each_blob_in_storage_account')?['Id']))}"
+                        },
+                        "runAfter": {
+                            "For_each": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "Execute_JavaScript_Code": {
+                        "inputs": {
+                            "code": "var blob = workflowContext.actions.Compose.outputs;\r\n\r\nvar rows = blob.split(/\\r?\\n/);\r\nvar result = \"[\";\r\nfor (let i = 0; i < rows.length; i++) {\r\n  result += rows[i] + \",\";\r\n}\r\nresult = result.slice(0, -1);\r\nresult += \"]\"\r\n\r\n\r\nreturn result;"
+                        },
+                        "runAfter": {
+                            "Compose": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "JavaScriptCode"
+                    },
+                    "For_each": {
+                        "actions": {
+                            "Compose_Request_Body": {
+                                "inputs": {
+                                    "deviceId": "@{items('For_each')?['SystemProperties']?['connectionDeviceId']}",
+                                    "enqueuedDateTime": "@{items('For_each')['EnqueuedTimeUtc']}",
+                                    "hubName": "",
+                                    "payload": "@{items('For_each')['Body']}"
+                                },
+                                "runAfter": {},
+                                "type": "Compose"
+                            },
+                            "Send_HTTP_Request": {
+                                "inputs": {
+                                    "authentication": {
+                                        "password": "",
+                                        "type": "Basic",
+                                        "username": ""
+                                    },
+                                    "body": "@outputs('Compose_Request_Body')",
+                                    "method": "POST",
+                                    "uri": ""
+                                },
+                                "runAfter": {
+                                    "Compose_Request_Body": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Http"
+                            }
+                        },
+                        "foreach": "@body('Parse_JSON_array')",
+                        "runAfter": {
+                            "Parse_JSON_array": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Foreach"
+                    },
+                    "Get_blob_content": {
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent(items('For_each_blob_in_storage_account')?['Path']))}/content",
+                            "queries": {
+                                "inferContentType": true
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    },
+                    "Parse_JSON_array": {
+                        "inputs": {
+                            "content": "@body('Execute_JavaScript_Code')?['body']",
+                            "schema": {
+                                "items": {
+                                    "properties": {
+                                        "Body": {
+                                            "properties": {
+                                                "temperature": {
+                                                    "type": "number"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "EnqueuedTimeUtc": {
+                                            "type": "string"
+                                        },
+                                        "Properties": {
+                                            "properties": {},
+                                            "type": "object"
+                                        },
+                                        "SystemProperties": {
+                                            "properties": {
+                                                "connectionAuthMethod": {
+                                                    "type": "string"
+                                                },
+                                                "connectionDeviceGenerationId": {
+                                                    "type": "string"
+                                                },
+                                                "connectionDeviceId": {
+                                                    "type": "string"
+                                                },
+                                                "contentEncoding": {
+                                                    "type": "string"
+                                                },
+                                                "contentType": {
+                                                    "type": "string"
+                                                },
+                                                "enqueuedTime": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "EnqueuedTimeUtc",
+                                        "Properties",
+                                        "SystemProperties",
+                                        "Body"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "runAfter": {
+                            "Execute_JavaScript_Code": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ParseJson"
+                    },
+                    "Set_FileBlob": {
+                        "inputs": {
+                            "name": "FileBlob",
+                            "value": "@{body('Get_blob_content')}"
+                        },
+                        "runAfter": {
+                            "Get_blob_content": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "SetVariable"
+                    }
+                },
+                "foreach": "@body('Lists_blobs_in_storage_account')?['value']",
+                "runAfter": {
+                    "Lists_blobs_in_storage_account": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "Initialize_FileBlob": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "FileBlob",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Lists_blobs_in_storage_account": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/foldersV2/@{encodeURIComponent(encodeURIComponent(''))}",
+                    "queries": {
+                        "nextPageMarker": "",
+                        "useFlatListing": false
+                    }
+                },
+                "runAfter": {
+                    "Initialize_FileBlob": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "evaluatedRecurrence": {
+                    "frequency": "Minute",
+                    "interval": 1
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 1
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azureblob": {
+                    "connectionId": "",
+                    "connectionName": "azureblob",
+                    "id": ""
+                }
+            }
+        }
+    }
+}
