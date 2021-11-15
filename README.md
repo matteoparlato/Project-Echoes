@@ -16,6 +16,8 @@ For all those who want to extend the functionality or fix bugs (hope not) here a
   - A Dynamics 365 Business Central environment.
   - An Azure subscription.
   - Visual Studio Code with AL Language extension installed.
+  - A Node-RED environment.
+  - An OPC UA Simulation Server.
 
 ## Authors
 

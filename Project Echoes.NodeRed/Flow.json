@@ -1,0 +1,260 @@
+[
+    {
+        "id": "24983c3c529bd4ac",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "395730c5f4b3cc33",
+        "type": "azureiotdevice",
+        "z": "24983c3c529bd4ac",
+        "deviceid": "NodeRed",
+        "pnpModelid": "",
+        "connectiontype": "constr",
+        "authenticationmethod": "sas",
+        "iothub": "",
+        "isIotcentral": false,
+        "scopeid": "",
+        "enrollmenttype": "",
+        "saskey": "",
+        "certname": "",
+        "keyname": "",
+        "protocol": "mqtt",
+        "retryInterval": 30,
+        "methods": [
+            {
+                "name": "setVariable"
+            }
+        ],
+        "DPSpayload": "",
+        "gatewayHostname": "",
+        "caname": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "x": 770,
+        "y": 140,
+        "wires": [
+            [
+                "e18f4e6d1ffc6340"
+            ]
+        ]
+    },
+    {
+        "id": "a65821e5cb1e1487",
+        "type": "inject",
+        "z": "24983c3c529bd4ac",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "10",
+        "topic": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "404a46b90ec6ae2d"
+            ]
+        ]
+    },
+    {
+        "id": "20d119c11e54771b",
+        "type": "OpcUa-Client",
+        "z": "24983c3c529bd4ac",
+        "endpoint": "da079f90d58a2dcb",
+        "action": "read",
+        "deadbandtype": "a",
+        "deadbandvalue": 1,
+        "time": 10,
+        "timeUnit": "s",
+        "certificate": "n",
+        "localfile": "",
+        "localkeyfile": "",
+        "securitymode": "None",
+        "securitypolicy": "None",
+        "name": "",
+        "x": 520,
+        "y": 60,
+        "wires": [
+            [
+                "dcf532f3563a3211"
+            ]
+        ]
+    },
+    {
+        "id": "404a46b90ec6ae2d",
+        "type": "OpcUa-Item",
+        "z": "24983c3c529bd4ac",
+        "item": "NodeId ns=3;i=1007 ",
+        "datatype": "Double",
+        "value": "",
+        "name": "",
+        "x": 320,
+        "y": 60,
+        "wires": [
+            [
+                "20d119c11e54771b"
+            ]
+        ]
+    },
+    {
+        "id": "dcf532f3563a3211",
+        "type": "function",
+        "z": "24983c3c529bd4ac",
+        "name": "Create Telemetry",
+        "func": "var temperature = msg.payload;\nmsg = {\n    'topic': 'telemetry',\n    'payload': {\n        'temperature': temperature\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 60,
+        "wires": [
+            [
+                "395730c5f4b3cc33"
+            ]
+        ]
+    },
+    {
+        "id": "e18f4e6d1ffc6340",
+        "type": "function",
+        "z": "24983c3c529bd4ac",
+        "name": "Hub Command Response",
+        "func": "if (msg.topic == \"command\") {\n   var responseMsg = {\n       \"topic\": \"response\",\n       \"payload\": {\n            \"requestId\": msg.payload.requestId,\n            \"methodName\": msg.payload.methodName,\n            \"status\": 200,\n            \"payload\": msg.payload.payload\n       }\n   };\n   return responseMsg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 240,
+        "wires": [
+            [
+                "395730c5f4b3cc33",
+                "43eab771c571dd31"
+            ]
+        ]
+    },
+    {
+        "id": "1f2250a9daa93cbd",
+        "type": "OpcUa-Client",
+        "z": "24983c3c529bd4ac",
+        "endpoint": "da079f90d58a2dcb",
+        "action": "write",
+        "deadbandtype": "a",
+        "deadbandvalue": 1,
+        "time": 10,
+        "timeUnit": "s",
+        "certificate": "n",
+        "localfile": "",
+        "localkeyfile": "",
+        "securitymode": "None",
+        "securitypolicy": "None",
+        "name": "",
+        "x": 1520,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bfd576a78aa00127",
+        "type": "OpcUa-Item",
+        "z": "24983c3c529bd4ac",
+        "item": "ns=3;i=1008",
+        "datatype": "String",
+        "value": "",
+        "name": "",
+        "x": 1320,
+        "y": 60,
+        "wires": [
+            [
+                "1f2250a9daa93cbd"
+            ]
+        ]
+    },
+    {
+        "id": "43eab771c571dd31",
+        "type": "switch",
+        "z": "24983c3c529bd4ac",
+        "name": "Switch MethodName",
+        "property": "payload.methodName",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "setVariable",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 1,
+        "x": 1060,
+        "y": 240,
+        "wires": [
+            [
+                "e01bd6323d30af92"
+            ]
+        ]
+    },
+    {
+        "id": "e01bd6323d30af92",
+        "type": "function",
+        "z": "24983c3c529bd4ac",
+        "name": "Get Payload",
+        "func": "msg.payload = msg.payload.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1310,
+        "y": 120,
+        "wires": [
+            [
+                "bfd576a78aa00127",
+                "068cf4229fe99232"
+            ]
+        ]
+    },
+    {
+        "id": "068cf4229fe99232",
+        "type": "debug",
+        "z": "24983c3c529bd4ac",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1500,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "da079f90d58a2dcb",
+        "type": "OpcUa-Endpoint",
+        "endpoint": "",
+        "secpol": "None",
+        "secmode": "None",
+        "login": false
+    }
+]

@@ -28,32 +28,4 @@ table 50100 "AMW IoT Hub Setup"
             Clustered = true;
         }
     }
-
-    trigger OnInsert()
-    var
-        Helper: Codeunit "AMW IoT Hub Helper";
-    begin
-        Rec.TestField("Hub Name");
-        Rec.TestField("SAS Token");
-        Helper.SetDefaultEndpoints("Hub Name");
-    end;
-
-    trigger OnDelete()
-    var
-        Endpoint: Record "AMW IoT Hub Endpoint";
-        Device: Record "AMW IoT Device";
-        Telemetry: Record "AMW IoT Device Telemetry";
-    begin
-        Endpoint.Reset();
-        Endpoint.SetRange("Hub Name", "Hub Name");
-        Endpoint.DeleteAll();
-
-        Device.Reset();
-        Device.SetRange("Hub Name", "Hub Name");
-        Device.DeleteAll();
-
-        Telemetry.Reset();
-        Telemetry.SetRange("Hub Name", "Hub Name");
-        Telemetry.DeleteAll();
-    end;
 }
