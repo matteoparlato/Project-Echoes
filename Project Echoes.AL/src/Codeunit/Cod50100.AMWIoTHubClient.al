@@ -4,18 +4,18 @@ codeunit 50100 "AMW IoT Hub Client"
         Client: HttpClient;
 
     /// <summary>
-    /// 
+    /// Procedure which returns an HttpClient instance.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An HttpClient instance</returns>
     procedure GetClient(): HttpClient
     begin
         exit(Client);
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which initializes the HttpClient with the provided parameters.
     /// </summary>
-    /// <param name="SASToken"></param>
+    /// <param name="SASToken">The SAS token to add as Authorization header</param>
     procedure InitializeClient(SASToken: Text)
     begin
         Client.Clear();
@@ -23,7 +23,7 @@ codeunit 50100 "AMW IoT Hub Client"
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which adds a request header to the HttpClient.
     /// </summary>
     /// <param name="Name"></param>
     /// <param name="Value"></param>
@@ -33,15 +33,16 @@ codeunit 50100 "AMW IoT Hub Client"
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which gets the identities of multiple devices from the IoT Hub identity registry.
     /// </summary>
-    /// <param name="HubName"></param>
-    /// <returns></returns>
+    /// <param name="HubName">The name of the hub to query</param>
+    /// <returns>A value that indicates if the HTTP response was successful</returns>
     procedure GetDevices(HubName: Text): Boolean
     var
         Hub: Record "AMW IoT Hub Setup";
         Endpoint: Record "AMW IoT Hub Endpoint";
         Device: Record "AMW IoT Device";
+        Handled: Boolean;
         ResponseMessage: HttpResponseMessage;
         ReponseContent: Text;
         JArray: JsonArray;
@@ -51,6 +52,10 @@ codeunit 50100 "AMW IoT Hub Client"
     begin
         Hub.Get(HubName);
         Endpoint.Get(HubName, Endpoint.Code::DEVICES);
+
+        OnBeforeGetDevices(Hub, Endpoint, Device, ResponseMessage, Handled);
+        if Handled then
+            exit(ResponseMessage.IsSuccessStatusCode);
 
         if Hub."Enable Log" then
             LogServiceEvent(Endpoint, '');
@@ -94,16 +99,17 @@ codeunit 50100 "AMW IoT Hub Client"
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which invokes a direct method on a device.
     /// </summary>
-    /// <param name="Device"></param>
-    /// <param name="Method"></param>
-    /// <param name="Payload"></param>
-    /// <returns></returns>
+    /// <param name="Device">The device where to invoke the method</param>
+    /// <param name="Method">The name of the method to invoke</param>
+    /// <param name="Payload">The payload of the method</param>
+    /// <returns>A value that indicates if the HTTP response was successful</returns>
     procedure InvokeMethod(Device: Record "AMW IoT Device"; Method: Text; Payload: Text): Boolean
     var
         Hub: Record "AMW IoT Hub Setup";
         Endpoint: Record "AMW IoT Hub Endpoint";
+        Handled: Boolean;
         Uri: Text;
         Content: HttpContent;
         ContentText: Text;
@@ -112,6 +118,10 @@ codeunit 50100 "AMW IoT Hub Client"
     begin
         Hub.Get(Device."Hub Name");
         Endpoint.Get(Device."Hub Name", Endpoint.Code::TWINS_METHODS_INVOKE);
+
+        OnBeforeInvokeMethod(Hub, Endpoint, Method, Payload, ResponseMessage, Handled);
+        if Handled then
+            exit(ResponseMessage.IsSuccessStatusCode);
 
         JObject.Add('connectTimeoutInSeconds', 60);
         JObject.Add('responseTimeoutInSeconds', 60);
@@ -135,11 +145,10 @@ codeunit 50100 "AMW IoT Hub Client"
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which logs HttpClient request details.
     /// </summary>
-    /// <param name="Endpoint"></param>
-    /// <param name="Uri"></param>
-    /// <param name="Content"></param>
+    /// <param name="Endpoint">The endpoint called by the HttpClient</param>
+    /// <param name="Content">The content of the request sent by the HttpClient</param>
     local procedure LogServiceEvent(Endpoint: Record "AMW IoT Hub Endpoint"; Content: Text)
     var
         ActivityLog: Record "Activity Log";
@@ -148,10 +157,10 @@ codeunit 50100 "AMW IoT Hub Client"
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which logs HttpClient request details.
     /// </summary>
-    /// <param name="Endpoint"></param>
-    /// <param name="RequestMessage"></param>
+    /// <param name="Endpoint">The endpoint called by HttpClient</param>
+    /// <param name="RequestMessage">The request message sent by the HttpClient</param>
     local procedure LogServiceEvent(Endpoint: Record "AMW IoT Hub Endpoint"; RequestMessage: HttpRequestMessage)
     var
         ActivityLog: Record "Activity Log";
@@ -162,10 +171,10 @@ codeunit 50100 "AMW IoT Hub Client"
     end;
 
     /// <summary>
-    /// 
+    /// Procedure which logs HttpClient response details.
     /// </summary>
-    /// <param name="Endpoint"></param>
-    /// <param name="ResponseMessage"></param>
+    /// <param name="Endpoint">The endpoint called by HttpClient</param>
+    /// <param name="ResponseMessage">The response message received from the HttpClient</param>
     local procedure LogServiceEvent(Endpoint: Record "AMW IoT Hub Endpoint"; ResponseMessage: HttpResponseMessage)
     var
         ActivityLog: Record "Activity Log";
@@ -173,5 +182,15 @@ codeunit 50100 "AMW IoT Hub Client"
     begin
         ResponseMessage.Content.ReadAs(ContentText);
         ActivityLog.LogActivity(Endpoint, ActivityLog.Status::Success, 'AMW_AZ_IOT_HUB_RESPONSE', Format(ResponseMessage.HttpStatusCode), ContentText);
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeGetDevices(Hub: Record "AMW IoT Hub Setup"; Endpoint: Record "AMW IoT Hub Endpoint"; Device: Record "AMW IoT Device"; var ResponseMessage: HttpResponseMessage; var Handled: Boolean)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeInvokeMethod(Hub: Record "AMW IoT Hub Setup"; Endpoint: Record "AMW IoT Hub Endpoint"; Method: Text; Payload: Text; ResponseMessage: HttpResponseMessage; Handled: Boolean)
+    begin
     end;
 }
