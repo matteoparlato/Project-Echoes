@@ -1,5 +1,5 @@
 
-# AMW_Azure_IoT_Hub
+# AMW Azure IoT Hub
 
 
 ## Details
