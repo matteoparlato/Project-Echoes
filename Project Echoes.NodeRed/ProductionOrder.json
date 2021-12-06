@@ -1,0 +1,432 @@
+[
+    {
+        "id": "2250b18b.34cf1e",
+        "type": "tab",
+        "label": "PLC_TO_ERP",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8339539b.71e7",
+        "type": "change",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "productionOrderLineNo",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1130,
+        "y": 220,
+        "wires": [
+            [
+                "479e3527.5ae74c"
+            ]
+        ]
+    },
+    {
+        "id": "283d22a0.63ee5e",
+        "type": "change",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "itemNo",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1080,
+        "y": 280,
+        "wires": [
+            [
+                "7ff4ab20.4f2d94"
+            ]
+        ]
+    },
+    {
+        "id": "9c56666f.082f58",
+        "type": "change",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "finishedQuantity",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1110,
+        "y": 340,
+        "wires": [
+            [
+                "1f841ab1.76e0b5"
+            ]
+        ]
+    },
+    {
+        "id": "467b3de4.d9cac4",
+        "type": "change",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "scrapQuantity",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1100,
+        "y": 400,
+        "wires": [
+            [
+                "16eae42f445618fb"
+            ]
+        ]
+    },
+    {
+        "id": "60c0d16b.f5a45",
+        "type": "function",
+        "z": "2250b18b.34cf1e",
+        "name": "Get ProductionOrderLineNo",
+        "func": "msg.topic = \"ns=3;i=1012;datatype=UInt32\";\nmsg.orig = \"ProductionOrderLineNo\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 220,
+        "wires": [
+            [
+                "cefc02e9.0d892"
+            ]
+        ]
+    },
+    {
+        "id": "cefc02e9.0d892",
+        "type": "link out",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "links": [
+            "c5850ffb.306ac"
+        ],
+        "x": 615,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "1a331f69.050461",
+        "type": "link in",
+        "z": "2250b18b.34cf1e",
+        "name": "PLC_TO_ERP_ProductionOrderLineNo",
+        "links": [
+            "fcf0a33c.4ea"
+        ],
+        "x": 895,
+        "y": 220,
+        "wires": [
+            [
+                "8339539b.71e7"
+            ]
+        ]
+    },
+    {
+        "id": "479e3527.5ae74c",
+        "type": "function",
+        "z": "2250b18b.34cf1e",
+        "name": "Get ItemNo",
+        "func": "msg.topic = \"ns=3;i=1013;datatype=String\";\nmsg.orig = \"ItemNo\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 280,
+        "wires": [
+            [
+                "f0bb395a.3bc068"
+            ]
+        ]
+    },
+    {
+        "id": "f0bb395a.3bc068",
+        "type": "link out",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "links": [
+            "c5850ffb.306ac"
+        ],
+        "x": 615,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "a87b70.19b0f49",
+        "type": "link in",
+        "z": "2250b18b.34cf1e",
+        "name": "PLC_TO_ERP_ItemNo",
+        "links": [
+            "882cb0d3.820bc"
+        ],
+        "x": 895,
+        "y": 280,
+        "wires": [
+            [
+                "283d22a0.63ee5e"
+            ]
+        ]
+    },
+    {
+        "id": "7ff4ab20.4f2d94",
+        "type": "function",
+        "z": "2250b18b.34cf1e",
+        "name": "Get FinishedQuantity",
+        "func": "msg.topic = \"ns=3;i=1015;datatype=UInt32\";\nmsg.orig = \"FinishedQuantity\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 340,
+        "wires": [
+            [
+                "cad6376b.4adb18"
+            ]
+        ]
+    },
+    {
+        "id": "cad6376b.4adb18",
+        "type": "link out",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "links": [
+            "c5850ffb.306ac"
+        ],
+        "x": 615,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "8d193c70.eadc",
+        "type": "link in",
+        "z": "2250b18b.34cf1e",
+        "name": "PLC_TO_ERP_FinishedQuantity",
+        "links": [
+            "f4800300.c3d54"
+        ],
+        "x": 895,
+        "y": 340,
+        "wires": [
+            [
+                "9c56666f.082f58"
+            ]
+        ]
+    },
+    {
+        "id": "1f841ab1.76e0b5",
+        "type": "function",
+        "z": "2250b18b.34cf1e",
+        "name": "Get ScrapQuantity",
+        "func": "msg.topic = \"ns=3;i=1017;datatype=UInt32\";\nmsg.orig = \"ScrapQuantity\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 400,
+        "wires": [
+            [
+                "af8b067a.7d48d8"
+            ]
+        ]
+    },
+    {
+        "id": "af8b067a.7d48d8",
+        "type": "link out",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "links": [
+            "c5850ffb.306ac"
+        ],
+        "x": 615,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "b5cec60b.cd3708",
+        "type": "link in",
+        "z": "2250b18b.34cf1e",
+        "name": "PLC_TO_ERP_ScrapQuantity",
+        "links": [
+            "39d7cda9.7860b2"
+        ],
+        "x": 895,
+        "y": 400,
+        "wires": [
+            [
+                "467b3de4.d9cac4"
+            ]
+        ]
+    },
+    {
+        "id": "bbe0a616.f00348",
+        "type": "function",
+        "z": "2250b18b.34cf1e",
+        "name": "Get ProductionOrderNo",
+        "func": "msg.topic = \"ns=3;i=1011;datatype=String\";\nmsg.orig = \"ProductionOrderNo\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "5de10b72.d41684"
+            ]
+        ]
+    },
+    {
+        "id": "5de10b72.d41684",
+        "type": "link out",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "links": [
+            "c5850ffb.306ac"
+        ],
+        "x": 615,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "7693a7fd.991558",
+        "type": "change",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "productionOrderNo",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1120,
+        "y": 160,
+        "wires": [
+            [
+                "60c0d16b.f5a45"
+            ]
+        ]
+    },
+    {
+        "id": "d03b094a.15fed8",
+        "type": "link in",
+        "z": "2250b18b.34cf1e",
+        "name": "PLC_TO_ERP_ProductionOrderNo",
+        "links": [
+            "1d597f3d.5c1c71"
+        ],
+        "x": 895,
+        "y": 160,
+        "wires": [
+            [
+                "7693a7fd.991558"
+            ]
+        ]
+    },
+    {
+        "id": "e8432b1311a551a4",
+        "type": "inject",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "props": [],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "bbe0a616.f00348"
+            ]
+        ]
+    },
+    {
+        "id": "59ccdb4efd4c18ac",
+        "type": "link out",
+        "z": "2250b18b.34cf1e",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "bc3169c8dd047aff"
+        ],
+        "x": 1515,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "16eae42f445618fb",
+        "type": "function",
+        "z": "2250b18b.34cf1e",
+        "name": "Create Telemetry",
+        "func": "msg = {\n    'topic': 'telemetry',\n    'payload': {\n        'productionOrderNo': flow.get(\"productionOrderNo\"),\n        'productionOrderLineNo': flow.get(\"productionOrderLineNo\"),\n        'itemNo': flow.get(\"itemNo\"),\n        'finishedQuantity': flow.get(\"finishedQuantity\"),\n        'scrapQuantity': flow.get(\"scrapQuantity\")\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1350,
+        "y": 400,
+        "wires": [
+            [
+                "59ccdb4efd4c18ac"
+            ]
+        ]
+    }
+]
