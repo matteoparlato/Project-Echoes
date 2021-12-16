@@ -42,6 +42,13 @@ page 50103 "AMW IoT Direct Method"
                     MultiLine = true;
                     ShowMandatory = true;
                 }
+                field(GlobalResponse; GlobalResponse)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Response';
+                    Editable = false;
+                    MultiLine = true;
+                }
             }
         }
     }
@@ -61,16 +68,22 @@ page 50103 "AMW IoT Direct Method"
                 var
                     Hub: Record "AMW IoT Hub Setup";
                     Service: Codeunit "AMW IoT Hub Client";
+                    ResponseMessage: HttpResponseMessage;
+                    ResponseContent: Text;
                 begin
                     Clear(GlobalNotification);
+                    Clear(GlobalResponse);
 
                     Hub.Get(GlobalDevice."Hub Name");
                     Service.InitializeClient(Hub."SAS Token");
-                    if Service.InvokeMethod(GlobalDevice, GlobalMethodName, GlobalPayload) then
+                    if Service.InvokeMethod(GlobalDevice, GlobalMethodName, GlobalPayload, ResponseMessage) then
                         GlobalNotification.Message(StrSubstNo(InvokeSuccessMsg, GlobalMethodName, GlobalDevice."Device ID"))
                     else
                         GlobalNotification.Message(StrSubstNo(InvokeErrorMsg, GlobalMethodName, GlobalDevice."Device ID"));
                     GlobalNotification.Send();
+
+                    ResponseMessage.Content().ReadAs(ResponseContent);
+                    GlobalResponse := ResponseContent;
                 end;
             }
         }
@@ -80,6 +93,7 @@ page 50103 "AMW IoT Direct Method"
         GlobalDevice: Record "AMW IoT Device";
         GlobalMethodName: Text;
         GlobalPayload: Text;
+        GlobalResponse: Text;
         GlobalNotification: Notification;
         InvokeSuccessMsg: Label 'Successfully invoked direct method %1 on %2!';
         InvokeErrorMsg: Label 'An error occured while invoking direct method %1 on %2. Please check if the device is enabled and connected.';

@@ -44,7 +44,7 @@ codeunit 50100 "AMW IoT Hub Client"
         Device: Record "AMW IoT Device";
         Handled: Boolean;
         ResponseMessage: HttpResponseMessage;
-        ReponseContent: Text;
+        ResponseContent: Text;
         JArray: JsonArray;
         JObject: JsonObject;
         JToken: JsonToken;
@@ -70,9 +70,9 @@ codeunit 50100 "AMW IoT Hub Client"
             Device.SetRange("Hub Name", HubName);
             Device.DeleteAll();
 
-            ResponseMessage.Content().ReadAs(ReponseContent);
+            ResponseMessage.Content().ReadAs(ResponseContent);
 
-            JArray.ReadFrom(ReponseContent);
+            JArray.ReadFrom(ResponseContent);
             foreach JToken in JArray do begin
                 Device.init;
                 Device."Hub Name" := HubName;
@@ -104,8 +104,9 @@ codeunit 50100 "AMW IoT Hub Client"
     /// <param name="Device">The device where to invoke the method</param>
     /// <param name="Method">The name of the method to invoke</param>
     /// <param name="Payload">The payload of the method</param>
+    /// <param name="ResponseMessage">The HTTP response</param>
     /// <returns>A value that indicates if the HTTP response was successful</returns>
-    procedure InvokeMethod(Device: Record "AMW IoT Device"; Method: Text; Payload: Text): Boolean
+    procedure InvokeMethod(Device: Record "AMW IoT Device"; Method: Text; Payload: Text; var ResponseMessage: HttpResponseMessage): Boolean
     var
         Hub: Record "AMW IoT Hub Setup";
         Endpoint: Record "AMW IoT Hub Endpoint";
@@ -114,7 +115,6 @@ codeunit 50100 "AMW IoT Hub Client"
         Content: HttpContent;
         ContentText: Text;
         JObject: JsonObject;
-        ResponseMessage: HttpResponseMessage;
     begin
         Hub.Get(Device."Hub Name");
         Endpoint.Get(Device."Hub Name", Endpoint.Code::TWINS_METHODS_INVOKE);
