@@ -1,13 +1,13 @@
 page 50104 "AMW IoT Device Telemetry API"
 {
     APIGroup = 'iot';
-    APIPublisher = 'AMW';
+    APIPublisher = 'amw';
     APIVersion = 'v1.0';
     Caption = 'AMW IoT Device Telemetry API';
     DelayedInsert = true;
     DeleteAllowed = false;
     EntityName = 'telemetry';
-    EntitySetName = 'telemetry';
+    EntitySetName = 'telemetryEntries';
     ModifyAllowed = false;
     PageType = API;
     SourceTable = "AMW IoT Device Telemetry";
